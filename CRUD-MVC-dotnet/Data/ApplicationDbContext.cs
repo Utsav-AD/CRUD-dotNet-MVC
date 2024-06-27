@@ -11,7 +11,7 @@ namespace CRUD_MVC_dotnet.Data
 
         }
 
-        public DbSet<Student> Students {  get; set; } 
+        public DbSet<Student> Students {  get; set; }
 
 
     }
