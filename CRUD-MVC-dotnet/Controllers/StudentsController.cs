@@ -1,10 +1,20 @@
-﻿using CRUD_MVC_dotnet.Models;
+﻿using CRUD_MVC_dotnet.Data;
+using CRUD_MVC_dotnet.Models;
+using CRUD_MVC_dotnet.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CRUD_MVC_dotnet.Controllers
 {
     public class StudentsController : Controller
     {
+        private readonly ApplicationDbContext dbContext;
+
+        public StudentsController(ApplicationDbContext dbContext)
+        {
+            this.dbContext = dbContext;
+        }
+
         [HttpGet]
         public IActionResult Add()
         {
@@ -12,9 +22,29 @@ namespace CRUD_MVC_dotnet.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(AddStudentViewModel viewModel )
+        public async Task<IActionResult> Add(AddStudentViewModel viewModel )
         {
+            var student = new Student
+            {
+                Name = viewModel.Name,
+                Email = viewModel.Email,
+                Phone = viewModel.Phone,
+                Subscribed = viewModel.Subscribed
+            };
+
+            await dbContext.Students.AddAsync(student);
+            await dbContext.SaveChangesAsync();
+
+
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> List()
+        {
+            var students = await dbContext.Students.ToListAsync();
+
+            return View(students);
         }
     }
 }
